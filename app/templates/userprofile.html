@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block meta %}
+<meta property="og:title" content="Orch.in" />
+<meta property="og:description" content="Best of the Internets" />
+<meta property="og:image" content="/static/banner.png" />
+<link href="/static/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
+
+{% endblock %}
+
+{% block title %}CEFY{% endblock %}
+
+
+{% block content %}
+  
+       
+    <div class="col-md-12">
+
+      <li class="list" id="foo">
+        <h1 class="center">{{record[0][0]}}</h1><br>
+
+        <div class="col-md-8">
+          <h3>📧 {{record[0][1]}}</h3>
+          <h3>📞 {{record[0][2]}}</h3>
+          <h3>📍 {{record[0][3]}}</h3>
+
+          <div id="myStat" data-part="{{record[1]['credit_score']}}" data-percent="{{record[1]['credit_score']}}" data-text="{{record[1]['credit_score']}}%" data-dimension="250"  data-info="CEFY™ Score" data-width="60" data-fontsize="38"  data-fgcolor="#61a9dc" data-bgcolor="#eee" bordersize="15" data-fill="#ddd" data-total="100" data-icon="long-arrow-up" data-icon-size="28" data-icon-color="#fff"></div>
+
+        </div>
+
+        <div class="col-md-4">
+        
+          <img src="{{record[1]['profile_pic']}}" width="385px">
+          <h4>Connected Accounts</h4>
+          <table class="table table-bordered" width="385px">
+            <tr>
+              <td>Facebook</td>
+              <td><a href="{{record[1]['fb']}}">{{record[1]['fb']}}</a></td>
+            </tr>
+            <tr>
+              <td>Twitter</td>
+              <td><a href="{{record[1]['tw']}}">{{record[1]['tw']}}</a></td>
+            </tr>
+            <tr>
+              <td>Website</td>
+              <td><a href="{{record[1]['wb']}}">{{record[1]['wb']}}</a></td>
+            </tr>
+          </table>
+        </div>
+
+      </li>
+    </div>
+    
+    
+{% endblock %}
+
+
+{% block script %}
+
+
+<script src="/static/js/jquery.circliful.min.js"></script>
+
+<script>
+$( document ).ready(function() {
+        $('#myStat').circliful();
+    });
+</script>
+
+
+{% endblock %}

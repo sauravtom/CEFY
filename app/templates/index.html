@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block meta %}
+<meta property="og:title" content="Orch.in" />
+<meta property="og:description" content="Best of the Internets" />
+<meta property="og:image" content="/static/banner.png" />
+{% endblock %}
+
+{% block title %}CEFY{% endblock %}
+
+
+{% block content %}
+
+
+    
+    <div class="col-md-12">
+      <li class="list" id="foo">
+        <h1>ACME Bank Database</h1><br>
+
+        <table class="table table-hover">
+
+          <tr class="success">
+            <td>Name</td>
+            <td>Email</td> 
+            <td>Phone</td>
+            <td>Address</td>
+            <td>user_id</td>
+            <td>CEFY Credit Score </td>
+          </tr>
+
+          {% for i in data %}
+              <tr style="cursor:pointer;" onclick="window.document.location='/user/{{i[0][-2]}}';">
+                {% for j in i[0] %}
+                  <td>{{j}}</td>
+                {% endfor %}  
+              </tr>
+          {% endfor %}
+
+
+
+        </table>
+
+
+      </li>
+    </div>
+    
+    
+{% endblock %}
+
+
+{% block script %}
+
+
+{% raw %}
+<script id="social_template" type="x-tmpl-mustache">
+
+  <div class='social social_appended'>
+
+    <i class="fa fa-twitter fa-2x"
+      onclick="
+        window.open(
+          'https://twitter.com/intent/tweet?source=webclient&text=orch.in/o/{{id}} via @orch_in',
+          'Tweet',
+          'width=626,height=436'); 
+        return false;">
+    </i>
+    
+    
+    
+    <i class="fa fa-facebook fa-2x"
+      onclick="
+        window.open(
+          'https://www.facebook.com/sharer/sharer.php?u=orch.in/o/{{id}}', 
+          'facebook-share-dialog', 
+          'width=626,height=436'); 
+        return false;">
+    </i>
+    
+
+    
+    <i class="fa fa-google-plus-square fa-2x"
+      onclick="
+        window.open(
+          'https://plus.google.com/share?url=orch.in/o/{{id}}',
+          'Google Plus Share', 
+          'width=626,height=436');
+        return false;">
+    </i>
+
+    <i id='special-share' class="fa fa-share-alt fa-2x"
+      onclick="
+        window.open(
+          'http://orch.in/android-share?url=orch.in/o/{{id}}&text={{}}');
+        return false;">
+    </i>
+
+    <i class="fa fa-cog fa-spin fa-2x settings-btn hidden"
+      onclick="
+        window.open(
+          '/edit/{{id}}');
+        return false;">
+    </i>
+
+  <hr class="seperator">
+  </div>
+</script>
+
+<script id="link_template" type="x-tmpl-mustache">
+  <div class='item'>
+    <a href="{{url}}" target="_blank">
+      <p class="title">{{title}}</p>
+      <img class="media" src='{{description}}' title='{{title}}'>
+    </a>
+  </div>
+</script>
+
+<script id="img_template" type="x-tmpl-mustache">
+  <div class='item'>
+    <a href="o/{{id}}" target="_blank">
+      <p class="title">{{title}}</p>
+      <img class="media" src='{{url}}' title='{{title}}'>
+    </a>
+  </div>
+</script>
+
+<script id="video_template" type="x-tmpl-mustache">
+  <div class='item'>
+    <a class="item video" href="o/{{id}}" target="_blank" style="text-decoration:none">
+      <p class="title">{{title}}</p> 
+    </a>
+    <div class="youtube-container">
+      <div class="youtube-player" data-id="{{url}}"></div>
+    </div>
+  </div>
+</script>
+
+<script id="video_template2" type="x-tmpl-mustache">
+  <div class='item'>
+    <a class="item video" href="o/{{id}}" target="_blank" style="text-decoration:none">
+      <p class="title">{{title}}</p> 
+    </a>
+    <iframe class="media" type="text/html" width="640" height="385"
+      src="https://www.youtube.com/embed/{{url}}"
+      frameborder="0">
+    </iframe>
+  </div>
+</script>
+
+{% endraw %}
+
+<script type="text/javascript">
+  var last_count = 1;
+  var loaded_arr = []
+  $(window).scroll(function(){ 
+   //console.log($(window).scrollTop() - ($(document).height() - $(window).height()))
+   if($(window).scrollTop() - ($(document).height() - $(window).height()) > -600){
+        var url = "/scroll/"+last_count;
+        last_count++;
+        $.getJSON(url, function(data) {
+            if(data=='0'){
+              console.log("This is the end.");
+            }
+            else{
+              data = data['data'];
+              $.each( data, function( key, p ) {
+                  var flag = 'valid'
+                  for(i=0;i<loaded_arr.length;i++){
+                    if (loaded_arr[i] == p['count']){
+                      flag = 'invalid'
+                      break;
+                    }
+                  }
+                  if (flag == 'invalid'){
+                    return true;
+                  }
+                  if(p['type'] == 'img' || p['type'] == 'gif'){
+                    addImg(p['count'],p['id'],p['title'],p['url']);
+                  }
+                  if(p['type'] == 'vid'){
+                    //addVid(p['count'],p['id'],p['title'],p['url']);
+                  }
+                  if(p['type'] == 'link'){
+                    addLink(p['count'],p['id'],p['title'],p['url'],p['description']);
+                  }
+                  
+                });
+            }
+            
+        });
+   };
+
+  })
+
+
+  function addImg(count,id,title,url) {
+    loaded_arr.push(count);
+    var template = $('#img_template').html();
+    var social_template = $('#social_template').html();
+    Mustache.parse(template);
+    var rendered = Mustache.render(template, {count:count,id: id,title:title,url:url});
+    var social = Mustache.render(social_template, {id:id});
+    var d = "<div class='post'>" + rendered+social + "</div>";
+    $('#foo').append(d);
+  }
+
+  function addVid(count,id,title,url) {
+    loaded_arr.push(count);
+    var template = $('#video_template').html();
+    var social_template = $('#social_template').html();
+    Mustache.parse(template);
+    var rendered = Mustache.render(template, {count:count,id: id,title:title,url:url});
+    var social = Mustache.render(social_template, {id:id});
+    var d = "<div class='post'>" + rendered+social + "</div>";
+    $('#foo').append(d);
+  }
+
+  function addLink(count,id,title,url,description) {
+    loaded_arr.push(count);
+    var template = $('#link_template').html();
+    var social_template = $('#social_template').html();
+    Mustache.parse(template);
+    var rendered = Mustache.render(template, {count:count,id: id,title:title,url:url,description:description});
+    var social = Mustache.render(social_template, {id:id});
+    var d = "<div class='post'>" + rendered+social + "</div>";
+    $('#foo').append(d);
+  }
+
+  function init_social(){
+    $('.social_original').each(function(i, obj) {
+        var id = $(this).attr("id");
+        var template = $('#social_template').html();
+        Mustache.parse(template);
+        var rendered = Mustache.render(template, {id:id});
+        $(this).html(rendered)
+    });
+  }
+  
+  function init_load(){
+    $.getJSON('/scroll/0', function(data) {
+        if(data=='0'){
+          console.log("This is the end.");
+        }
+        else{
+          data = data['data'];
+          $.each( data, function( key, p ) {
+              //console.log(key,p[7]);
+              if(p['type'] == 'img' || p['type'] == 'gif'){
+                addImg(p['count'],p['id'],p['title'],p['url']);
+              }
+              if(p['type'] == 'vid'){
+                //addVid(p['count'],p['id'],p['title'],p['url']);
+              }
+              if(p['type'] == 'link'){
+                addLink(p['count'],p['id'],p['title'],p['url'],p['description']);
+                console.log("asd");
+              }
+              
+            });
+        }
+        
+    });
+  }
+
+  $( document ).ready(function() {
+      console.log( "ready!" );
+      init_load();
+      init_social();
+  });
+  
+</script>
+
+{% endblock %}

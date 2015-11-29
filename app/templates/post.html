@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block meta %}
+<meta property="og:title" content="{{post['title']}}" />
+<meta property="og:description" content="{{post['description']}}" />
+<meta property="og:image" content="{{post['thumbnail']}}" />
+<meta property="og:url" content="{{post['url']}}" />
+<meta property="article:author" content="http://facebook.com/{{post['author_fbid']}}" />
+
+<meta property="og:type" content="article" />
+<meta property="article:publisher" content="https://www.facebook.com/orchdotin"/>
+<meta property="og:site_name" content="Orch.in"/>
+
+{% endblock %}
+
+{% block title %}{{post['title']}}{% endblock %}
+
+{% block css %}
+<style type="text/css">
+  #footer{
+    position: relative;
+  }
+  #continue{
+    width:100%;
+    text:bolder;
+    float: bottom;
+    background: rgba(246, 176, 62, 0.72);
+    text-align: center;
+    font-size: 120%;
+    padding:20px;
+    position: absolute; 
+    bottom: 0;
+  }
+  #content{
+    font-size: 130%;
+    width:100%;
+    text-align: left !important;
+  }
+  #content>div>img{
+    max-width: 500px;
+    min-width: 10px;
+    width:100%;
+  }
+  #content>div>iframe{
+    max-width: 640px;
+    width:100%;
+  }
+  #content>iframe{
+    max-width: 640px;
+    width:100%;
+  }
+  .author>a>img{
+    border-radius: 30px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1529132127366244&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+    
+    <div class="col-md-8">
+        
+        <div class="list post_page">
+
+          {% if category == "article"%}
+              <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+              <div class='post'>
+                  <p class="title">{{post['title']}}</p><br><br>
+
+                  <div class="author">
+
+                      <a href="https://facebook.com/{{post['author_fbid']}}">
+                        <img src="https://graph.facebook.com/{{post['author_fbid']}}/picture">
+                        <p class='a_name'>by {{post['author_name']}}</p>
+                      </a>
+                    
+                  </div>
+
+                  <p id="content" class="article">
+                    {{post['content']}}
+                  </p>
+              </div>
+
+          {% elif category == "meme"%}
+              <div class='post'>
+                  <p class="description">{{post['description']}}</p><br>
+                  {% if post['type'] == "img" or post['type'] == "gif" %}
+                      <a href="" target="_blank">
+                        <p class="title">{{post['title']}}</p>
+                        <img class="media" src='{{post['imageUrl']}}' title='{{post['title']}}'>
+                      </a>
+                  {% endif %}
+
+                  {% if post['type'] == "gfycat" %}
+                      <p class="description">{{post['description']}}</p>
+                      <br>
+                      <a class="item video" href="" target="_blank" style="text-decoration:none">
+                        <p class="title">{{post['title']}}</p>
+
+                        <script>
+                         (function(d, t) {
+                            var g = d.createElement(t),
+                                s = d.getElementsByTagName(t)[0];
+                            g.src = 'http://assets.gfycat.com/js/gfyajax-0.517d.js';
+                            s.parentNode.insertBefore(g, s);
+                        }(document, 'script'));
+                        </script>
+
+                        <img class="gfyitem" data-id="{{post['imageUrl']}}" />
+                      </a>
+                      
+                  {% endif %}  
+
+                  {% if post['type'] == "vid" %}
+                      <p class="description">{{post['description']}}</p>
+                      <br>
+                      <a class="item video" href="" target="_blank" style="text-decoration:none">
+                        <p class="title">{{post['title']}}</p>
+                        <iframe type="text/html" width="640" height="385"
+                          src="http://www.youtube.com/embed/{{post['imageUrl']}}?modestbranding=1"
+                          frameborder="0">
+                        </iframe>  
+                      </a>
+                      
+                  {% endif %}  
+              </div>
+          {% endif %}
+
+          <p class="">Comments</p>
+          <div class="fb-comments hidden-sm" data-href="http://orch.in/o/{{post['id']}}" data-numposts="5" data-colorscheme="light"></div>
+          <!-- <br><br><br>
+          <a class="twitter-timeline" href="https://twitter.com/orch_in" data-widget-id="561749975508332544">Tweets by @orch_in</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+ -->
+        </div>
+
+    </div>
+    
+    <div class="col-md-4 hidden-sm hidden-xs sider">
+      <div class="featured">
+          <p class='feat'>Featured</p>
+          {% for i in featured %}
+            <div class="side_post">
+              <a href="/o/{{i[1]}}">
+                  <img src="{{i[3]}}">
+                  <p>{{i[2]}}</p>
+              </a>
+            </div>
+          {% endfor %}
+      </div>
+
+        <iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Forchdotin&amp;width=500px&amp;height=290&amp;colorscheme=light&amp;show_faces=true&amp;header=true&amp;stream=false&amp;show_border=true&amp;appId=679779288806031" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:500pxpx; height:290px;" allowTransparency="true"></iframe>
+        <br>
+
+    </div>
+
+{% endblock %}
+
+
+{% block footer %}
+    <a href="/">
+    <div id="continue">Continue to Orch.in</div>
+    </a>
+{% endblock %}
+
+
+{% block script %}
+  <script type="text/javascript">
+      {% if category == "article"%}
+        $(document).ready(function(){
+            $('#content').html("{{post['content']}}");
+            $('#content').html($.parseHTML(unescape("{{post['content']}}")));
+            $('#content').html($('<div />').html("{{post.content}}").text());
+        });
+      {% endif %}
+  </script>
+{% endblock %}
