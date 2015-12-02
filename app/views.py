@@ -71,6 +71,24 @@ def morning(user_id):
     return jsonify(data=record)
 
 
+def push(data_dict):
+    access_token = util.get_access_token()['access_token']
+    headers = {'Authorization': 'Bearer ' + access_token,
+               'Content-type': 'application/json'}
+
+    url = '/services/data/v34.0/sobjects/foo__c/'
+
+    new_account = data_dict
+    json_new_account = json.dumps(new_account)
+
+    conn = util.get_connection()
+    conn.request("POST", url, json_new_account, headers)
+    res = conn.getresponse()
+    data = res.read().decode("utf-8")
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(json.loads(data))
+    print(data)
+
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
 

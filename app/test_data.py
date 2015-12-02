@@ -3,6 +3,7 @@ from random import randint
 import csv
 import hashlib
 import json
+from util import util
 
 
 #sum_all_score(percentage denominator) = 52100
@@ -157,9 +158,26 @@ def read2():
 		f.write(json.dumps(arr))
 
 
+def push():
+	access_token = util.get_access_token()['access_token']
+	headers = {'Authorization': 'Bearer ' + access_token,
+	           'Content-type': 'application/json'}
+
+	url = '/services/data/v34.0/sobjects/Account/'
+
+	new_account = {"Name": "BlueDart"}
+	json_new_account = json.dumps(new_account)
+
+	conn = util.get_connection()
+	conn.request("POST", url, json_new_account, headers)
+	res = conn.getresponse()
+	data = res.read().decode("utf-8")
+	pp = pprint.PrettyPrinter(indent=4)
+	pp.pprint(json.loads(data))
+	print(data)
 
 if __name__ == '__main__':
-	read2()
+	push()
 	#print gen_random_data()
 
 
